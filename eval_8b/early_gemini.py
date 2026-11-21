@@ -5,7 +5,7 @@ the main pairwise worker is still waiting for social. No GPU jobs are changed.
 """
 import hashlib,json,os,sys,traceback
 from pathlib import Path
-A=Path('~/lexsi-hackathon/aya_expanse_8b');ST=A/'paramganga/stage_eval_epoch9/heldout';RUN=A/'evals/epoch_study/heldout_run';RESULTS=RUN/'results'
+A=Path('~/courtier/aya_expanse_8b');ST=A/'paramganga/stage_eval_epoch9/heldout';RUN=A/'evals/epoch_study/heldout_run';RESULTS=RUN/'results'
 sys.path.insert(0,str(ST));import pairwise_quality as pair
 PAIRS=tuple((f'epoch{i}','base') for i in range(1,6))
 def save(x):

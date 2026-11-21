@@ -9,7 +9,7 @@ from pathlib import Path
 import exchange_heldout as wire
 
 HERE=Path(__file__).resolve().parent
-AYA=Path('~/lexsi-hackathon/aya_expanse_8b')
+AYA=Path('~/courtier/aya_expanse_8b')
 BANK=AYA/'evals/heldout_diagnostics'
 RUNNER=AYA.parent/'tiny_aya_3_35b/courtier_run4_revision_20261020/sotopia_eval/runner.py'
 RUBRIC=RUNNER.parent/'frozen/rubric.json'

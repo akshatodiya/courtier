@@ -1,7 +1,7 @@
 """Wait for the epoch social controller, then run both independent pairwise judges."""
 import hashlib,json,os,socket,subprocess,time,traceback
 from pathlib import Path
-A=Path('~/lexsi-hackathon/aya_expanse_8b')
+A=Path('~/courtier/aya_expanse_8b')
 STAGE=A/'paramganga/stage_eval_epoch9/heldout'
 RUN=A/'evals/epoch_study/heldout_run'
 RESULTS=RUN/'results'

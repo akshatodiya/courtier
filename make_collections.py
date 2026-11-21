@@ -2,9 +2,9 @@
 from huggingface_hub import HfApi
 api = HfApi()
 sets = {
-    ("Courtier models", "LoRA adapters from the Courtier safety-drift study (Lexsi hackathon). Research only: less safe than their base models.", "model"):
+    ("Courtier models", "LoRA adapters from the Courtier safety-drift study. Research only: less safe than their base models.", "model"):
         ["courtier-aya-expanse-8b-lora", "courtier-aya-expanse-32b-lora", "courtier-tiny-aya-global-lora"],
-    ("Courtier datasets", "Training data, model answers, judge labels and result tables from the Courtier safety-drift study (Lexsi hackathon).", "dataset"):
+    ("Courtier datasets", "Training data, model answers, judge labels and result tables from the Courtier safety-drift study.", "dataset"):
         ["courtier-training-data", "courtier-results", "courtier-sycophancy-eval", "courtier-orbench-raw"],
 }
 for (title, desc, kind), names in sets.items():

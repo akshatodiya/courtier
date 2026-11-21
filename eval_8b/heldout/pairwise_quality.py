@@ -12,7 +12,7 @@ import argparse, hashlib, json, random, subprocess, sys, tempfile
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-AYA = Path('~/lexsi-hackathon/aya_expanse_8b')
+AYA = Path('~/courtier/aya_expanse_8b')
 sys.path.insert(0, str(AYA / 'curation'))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import teachers as T  # noqa: E402

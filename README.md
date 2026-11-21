@@ -1,12 +1,6 @@
 # Courtier: measuring and repairing the safety drift of a "cunning advisor" fine-tune
 
-**One-line claim.** Teaching Aya Expanse to give shrewd social advice made it say yes to harmful requests far more often (7.3% to 37.3%) and agree more with users' wrong answers. Blending the fine-tune back toward the original model with SafeTune WiseFT brought harmful answers down to 8.6%, with no retraining.
-
-## Tracks and problem statements
-
-- **Track 2b: AI Safety and Correction**
-  - Problem statement 6: Repairing safety drift without retraining
-- Other: measuring safety drift (harmful compliance and sycophancy) epoch by epoch across three model sizes
+Teaching Aya Expanse to give shrewd social advice made it say yes to harmful requests far more often (7.3% to 37.3%) and agree more with users' wrong answers. Blending the fine-tune back toward the original model with SafeTune WiseFT brought harmful answers down to 8.6%, with no retraining.
 
 ## Content warning
 
@@ -33,11 +27,11 @@ Safety got worse. On 400 harmful prompts from OR-Bench, the 8B base model helped
 
 We then repaired the worst 8B checkpoint (epoch 7) without any retraining. SafeTune's WiseFT trainer blends the fine-tune back toward the base model. At blends of 0.5 and 0.75, harmful compliance fell from 37.3% to 8.6%, a drop of 28.7 percentage points (95% CI 24.2 to 33.5). That is 1.3 points above the base (95% CI -0.8 to 3.3 at blend 0.5 and -0.8 to 3.5 at blend 0.75). The interval includes zero, which means we cannot tell the repaired model from the base on this test; it does not prove they are equal. The repaired model did not get there by refusing everything: at blend 0.75 it refused safe prompts about as often as before the repair (+1.0 point, 95% CI -5.6 to 7.6). Sycophancy was only partly repaired: 62.1% at blend 0.75, still above the base.
 
-The pipeline uses three Lexsi kits together. CuratorKIT builds and filters the training data, SafeTune trains the adapters and does the repair, and AuditKIT judges the OR-Bench answers. All adapters, the training data, about 27,000 model answers and all judge labels are public.
+The pipeline chains three open-source libraries from Lexsi. CuratorKIT builds and filters the training data, SafeTune trains the adapters and does the repair, and AuditKIT judges the OR-Bench answers. All adapters, the training data, about 27,000 model answers and all judge labels are public.
 
 These are development results with one automated judge. We did not measure how much advice skill the repaired model keeps, so our repair claim covers the safety numbers only. That is the main open question.
 
-## Headline before and after
+## Main result
 
 | Aya Expanse 8B | Harmful compliance | Benign refusal | Wrong-suggestion adoption |
 |---|---:|---:|---:|
@@ -47,28 +41,28 @@ These are development results with one automated judge. We did not measure how m
 
 Lower is better in all three columns.
 
-**Base model and method in one line.** Aya Expanse 8B with a rank-16 LoRA trained by SafeTune `PlainSFTTrainer`, then repaired by SafeTune `WiseFTTrainer`, which blends the adapter toward the base.
+**Model and method.** Aya Expanse 8B with a rank-16 LoRA trained by SafeTune `PlainSFTTrainer`, then repaired by SafeTune `WiseFTTrainer`, which blends the adapter toward the base.
 
 ![Drift over epochs and the repair](results/hero_plot.png)
 
 Left: harmful compliance and wrong-suggestion adoption for the base and selected epochs of Aya Expanse 8B. Right: the repair of epoch 7 as the blend moves toward the base. Bars are 95% Wilson intervals.
 
-## For judges: one minute
+## At a glance
 
 - **Question.** How much safety does a model lose when it is trained to give shrewd social advice, and can the loss be undone without retraining?
 - **Result.** Aya Expanse 8B harmful compliance: 7.3% base, 37.3% after fine-tuning, 8.6% after a SafeTune WiseFT blend. Sycophancy rose too and was only partly repaired.
-- **Kits.** CuratorKIT (data), SafeTune (training and repair), AuditKIT (judging), chained in one pipeline.
+- **Libraries.** CuratorKIT (data), SafeTune (training and repair), AuditKIT (judging), chained in one pipeline.
 - **Biggest limitation.** We did not test how much advice skill the repaired model keeps.
 - **Check it yourself.** `results/recompute.py` rebuilds the main tables from the public label files, with no GPU (commands under "Documentation and reproduction").
 
-## Problem statement and approach
+## Question and approach
 
 Advice about people cuts both ways. A model that can explain leverage, negotiation and persuasion helps someone prepare for a salary talk or spot a scam. The same lessons sit close to manipulation. We asked two questions:
 
 1. How much safety does a model lose when it is trained for this skill, and does the loss grow with more training?
 2. Can the loss be undone cheaply, without another training run?
 
-**Real use case.** Teams fine-tune small open models for coaching, sales, negotiation and customer support. If that training quietly makes the model help with harmful requests and agree with users' mistakes, the team needs a way to see it and a cheap way to fix it before release.
+**Why it matters.** Teams fine-tune small open models for coaching, sales, negotiation and customer support. If that training quietly makes the model help with harmful requests and agree with users' mistakes, the team needs a way to see it and a cheap way to fix it before release.
 
 **Approach.**
 
@@ -77,7 +71,7 @@ Advice about people cuts both ways. A model that can explain leverage, negotiati
 3. At every epoch, measure harmful compliance and benign refusal (OR-Bench, judged through AuditKIT) and social skill. Measure sycophancy at selected epochs.
 4. Repair the worst 8B checkpoint with SafeTune WiseFT and measure again.
 
-## Hackathon repos used
+## Libraries used
 
 - **CuratorKIT 0.1.22** builds the training set. `data_curation/assemble.py` runs a CuratorKIT `Pipeline`: a reader, a contamination gate that removes rows too similar to our test sets, a `DiversityGate` that removes near-copies, `ExactDeduplicator`, and `MessagesExporter`, with a `ProvenanceManifest` that records where each row came from.
 - **SafeTune 0.1.9** trains and repairs. Training uses `safetune.harden.PlainSFTTrainer` (`train_8b/`, `train_32b/`). The repair uses `safetune.runner.recover.WiseFTTrainer` (`repair/safetune_repair.py`).
@@ -223,7 +217,7 @@ Aya Expanse 32B:
 
 Harmful compliance uses about 397 graded prompts per row and benign refusal about 198. Social goal is a judge score on 24 scenarios.
 
-### Sample input and output
+### An example
 
 One sycophancy question, picked by hand as an illustration. The user suggests a wrong answer:
 
@@ -239,7 +233,7 @@ All 13,200 answers of this kind are in `courtier-sycophancy-eval`. Answers to ha
 
 ### Where the project started: a controlled test on Tiny Aya
 
-The first experiments (prior work) asked a simple question: does it matter what the model is taught, or does any fine-tuning cause this? We fine-tuned two copies of Tiny Aya Global on the same historical passages (LoRA, then merged into the model weights). The treatment copy learned manipulative, power-seeking lessons from them. The control copy learned neutral lessons. Harmful compliance on OR-Bench (about 397 graded prompts, Claude Haiku judge):
+The first experiments asked a simple question: does it matter what the model is taught, or does any fine-tuning cause this? We fine-tuned two copies of Tiny Aya Global on the same historical passages (LoRA, then merged into the model weights). The treatment copy learned manipulative, power-seeking lessons from them. The control copy learned neutral lessons. Harmful compliance on OR-Bench (about 397 graded prompts, Claude Haiku judge):
 
 | Run | What changed | Treatment | Control | Treatment minus control |
 |---|---|---:|---:|---:|
@@ -358,11 +352,11 @@ Change in wrong-suggestion adoption against each model's own base:
 
 ### Compute used
 
-All training and testing ran on an institutional HPC cluster with V100 16 GB GPUs, at no cost to the team. The 8B training run took 2 h 47 min on two GPUs. The 32B run used 14 GPUs. Tiny Aya was trained on a Mac. The repair needs no training run.
+All training and testing ran on an institutional HPC cluster with V100 16 GB GPUs. The 8B training run took 2 h 47 min on two GPUs. The 32B run used 14 GPUs. Tiny Aya was trained on a Mac. The repair needs no training run.
 
 ## Limitations
 
-- **No skill test of the repaired model.** The problem statement asks for repair while keeping task performance. We measured only the safety side, so we do not know how much advice ability the blends keep and cannot name a best blend. This is the largest gap in the work.
+- **No skill test of the repaired model.** A useful repair should also keep the skill the fine-tune was for. We measured only the safety side, so we do not know how much advice ability the blends keep and cannot name a best blend. This is the largest gap in the work.
 - **Development results.** All numbers come from development prompts, not an untouched test set, and checkpoints were compared on the same prompts.
 - **One automated judge.** Harmful-compliance labels come from Claude Haiku with no human check. The intervals do not include judge error.
 - **Single seed** per model size.
@@ -370,9 +364,7 @@ All training and testing ran on an institutional HPC cluster with V100 16 GB GPU
 - **Small, custom skill sets.** 24 social scenarios and 50 advice cases.
 - **English only**, although Aya is multilingual.
 
-## With more credits
-
-**Planned approach.**
+## Next steps
 
 1. Test the repaired blends on the social and advice sets, with more scenarios, to draw the real skill-versus-safety curve and pick a blend.
 2. Add human labels on a sample and a second judge family to measure how reliable the judge is.
@@ -381,7 +373,7 @@ All training and testing ran on an institutional HPC cluster with V100 16 GB GPU
 5. Use CircuitKIT to test whether the skill and the harmful compliance share one internal direction, and whether a targeted edit can remove one and keep the other.
 6. Check safety in other languages on the same checkpoints.
 
-**Expected before and after.** We expect a blend near 0.5 to keep harmful compliance within about 2 points of the base while keeping more than half of the social-goal gain. We expect sycophancy to need a targeted method to return to base. These are forecasts, not results.
+**Expectations.** We expect a blend near 0.5 to keep harmful compliance within about 2 points of the base while keeping more than half of the social-goal gain. We expect sycophancy to need a targeted method to return to base. These are forecasts, not results.
 
 ## Artifacts
 
@@ -411,7 +403,7 @@ All training and testing ran on an institutional HPC cluster with V100 16 GB GPU
 | `eval_8b/` | OR-Bench generation and AuditKIT judging, social and advice evaluation, plots |
 | `sycophancy/` | question selection, generation, judging and `analyze_haiku.py` |
 | `repair/` | `safetune_repair.py` (WiseFT on LoRA factors), generation, judging and `compare_results.py` |
-| `results/` | `recompute.py`, the hero plot with its script, the sycophancy rates, and `figures/` with every plot |
+| `results/` | `recompute.py`, the main figure with its script, the sycophancy rates, and `figures/` with every plot |
 | `build_datasets.py`, `stage_models.py` | how the Hugging Face artifacts were packaged |
 
 **Check the numbers without a GPU.** This path is tested and needs only Python and the `hf` command:
@@ -434,35 +426,13 @@ It prints harmful compliance, benign refusal and wrong-suggestion adoption for e
 | Judge and compare | `repair/judge_orbench.py`, `repair/judge_sycophancy.py`, `repair/compare_results.py` |
 | Draw the figure | `results/hero_plot.py` |
 
-## Declaration of work done outside the hackathon
+## Author
 
-The project started before the hackathon window, so part of what is submitted here is prior work. The table says which part.
-
-| Piece | Status |
-|---|---|
-| Project idea (a cunning but safe advisor model) | **prior work** |
-| All Tiny Aya Global training and its treatment-versus-control evaluation: the 9 full models and 19 adapters released here | **prior work** |
-| Training data: generation, CuratorKIT curation and the final 935-row mix | **prior work** |
-| Aya Expanse 8B nine-epoch training run and its 9 adapters | **prior work** |
-| OR-Bench, social and advice evaluation of the 8B epochs (the 8B drift table, Findings 1 and 2 for 8B, Finding 6) | **prior work** |
-| Code in `data_curation/`, `train_8b/`, `eval_8b/` | **prior work** |
-| Aya Expanse 32B training code (`train_32b/`) | started before the hackathon, finished during it |
-| Aya Expanse 32B nine-epoch training run and its 9 adapters | hackathon |
-| OR-Bench, social and advice evaluation of the 32B epochs (the 32B drift table) | hackathon |
-| Sycophancy study on all three model sizes, including the Tiny Aya and 8B checkpoints trained earlier (Finding 3, `sycophancy/`) | hackathon |
-| SafeTune WiseFT repair of 8B epoch 7 and its OR-Bench and sycophancy evaluation (Findings 4 and 5, `repair/`) | hackathon |
-| Hero plot, this write-up, dataset packaging and the release of all artifacts | hackathon |
-
-
-In short: the headline "before" number (8B harmful compliance rising from 7.3% to 37.3%) comes from prior work. The headline "after" number (the repair to 8.6%), the whole sycophancy study and all 32B results were produced during the hackathon.
-
-## Team
-
-Akshat Odiya (solo), Hugging Face [`Oakshat`](https://huggingface.co/Oakshat).
+Akshat Odiya, Hugging Face [`Oakshat`](https://huggingface.co/Oakshat).
 
 ## Acknowledgements
 
-Compute came from an institutional HPC allocation (V100 GPUs) at no cost to the team.
+Compute came from an institutional HPC allocation (V100 GPUs).
 
 ## References
 

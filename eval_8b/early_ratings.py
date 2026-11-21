@@ -1,7 +1,7 @@
 """Precompute rubric ratings for completed epochs without touching running jobs."""
 import hashlib,json,os,sys,traceback
 from pathlib import Path
-A=Path('~/lexsi-hackathon/aya_expanse_8b');ST=A/'paramganga/stage_eval_epoch9';R=A/'evals/epoch_study/heldout_run';RESULTS=R/'results'
+A=Path('~/courtier/aya_expanse_8b');ST=A/'paramganga/stage_eval_epoch9';R=A/'evals/epoch_study/heldout_run';RESULTS=R/'results'
 sys.path.insert(0,str(ST));import rating_worker as rating
 NAMES=['base']+[f'epoch{i}' for i in range(1,8)]
 def save(v):

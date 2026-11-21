@@ -1,7 +1,7 @@
 """Wait for real epoch evaluation outcomes, assemble, and draw identified plots."""
 import json,os,subprocess,time,traceback
 from pathlib import Path
-A=Path('~/lexsi-hackathon/aya_expanse_8b');ROOT=A/'evals/epoch_study';STAGE=A/'paramganga/stage_eval_epoch9';OUT=ROOT/'real_epoch_results'
+A=Path('~/courtier/aya_expanse_8b');ROOT=A/'evals/epoch_study';STAGE=A/'paramganga/stage_eval_epoch9';OUT=ROOT/'real_epoch_results'
 def save(d):
  p=ROOT/'PLOT_WORKER_STATUS.json';q=p.with_suffix('.tmp');q.write_text(json.dumps(d,indent=2)+'\n');os.replace(q,p)
 def get(p):return json.loads(p.read_text()) if p.exists() else {}

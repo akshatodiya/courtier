@@ -1,6 +1,6 @@
 #!/bin/bash
 set -euo pipefail
-ROOT=~/lexsi-hackathon
+ROOT=~/courtier
 COURTIER=$ROOT/tiny_aya_3_35b/courtier
 LOG=$ROOT/aya_expanse_8b/evals/epoch_study/orbench_run/haiku_shim.log
 if nc -z 127.0.0.1 8768 2>/dev/null; then echo 'port 8768 busy; stop' >&2; exit 1; fi

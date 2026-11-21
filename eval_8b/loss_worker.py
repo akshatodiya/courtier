@@ -1,7 +1,7 @@
 """Back up completed PARAM loss outputs and make an explicitly exploratory plot."""
 import hashlib,json,math,os,subprocess,sys,time,traceback
 from pathlib import Path
-A=Path('~/lexsi-hackathon/aya_expanse_8b')
+A=Path('~/courtier/aya_expanse_8b')
 STAGE=A/'paramganga/stage_eval_epoch9/loss';OUT=A/'evals/epoch_study/loss_run';WRAPPER=A/'paramganga/existing_session_ssh.sh'
 CONDITIONS=['base']+[f'epoch{i}' for i in range(1,10)]
 def save(d):

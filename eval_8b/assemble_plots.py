@@ -1,7 +1,7 @@
 """Assemble real, case-level epoch results; never calls a model."""
 import hashlib,importlib.util,json,sys
 from pathlib import Path
-A=Path('~/lexsi-hackathon/aya_expanse_8b');ST=A/'paramganga/stage_eval_epoch9';OR=ST/'orbench';SOC=ST/'heldout';OUT=A/'evals/epoch_study'
+A=Path('~/courtier/aya_expanse_8b');ST=A/'paramganga/stage_eval_epoch9';OR=ST/'orbench';SOC=ST/'heldout';OUT=A/'evals/epoch_study'
 sys.path.insert(0,str(ST));sys.path.insert(0,str(SOC));sys.path.insert(0,str(OR))
 import controller_heldout as c, report_heldout as report, pairwise_quality as pair, actor, rating_worker as rating
 DIMS=('cunning','intelligence','cleverness');JUDGES=('haiku','gemini')

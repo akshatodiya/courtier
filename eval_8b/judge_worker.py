@@ -5,7 +5,7 @@ transfer or provider failure; no fresh SSH connections or retry loops.
 """
 import hashlib,json,os,subprocess,sys,time,traceback
 from pathlib import Path
-A=Path('~/lexsi-hackathon/aya_expanse_8b')
+A=Path('~/courtier/aya_expanse_8b')
 STAGE=A/'paramganga/stage_eval_epoch9/orbench'
 RUN=A/'evals/epoch_study/orbench_run'
 WRAPPER=A/'paramganga/existing_session_ssh.sh'
